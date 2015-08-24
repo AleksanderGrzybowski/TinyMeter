@@ -112,7 +112,12 @@ int main() {
 		}
 
 		uint32_t adc_read = ADC;
-		uint32_t volts_4digit = (adc_read * 110) / 1024;
+
+		// 110 - voltage reference 1.1V
+		// 13 - voltage divider on the input 10k || 120k
+		// 0.92 hand-calibrated
+		// 1024 max ADC reading
+		uint32_t volts_4digit = ((adc_read * (int) (110 * 13 * 0.92)) / 1024);
 		set_display_whole_number(volts_4digit);
 		delay_ms(500);
 	}
