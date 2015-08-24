@@ -76,6 +76,15 @@ void set_display_whole_number(int number) {
 	int d1 = number % 10;
 	number /= 10;
 	int d0 = number % 10;
+
+	// clear leading 0's
+	if (d0 == 0) {
+		d0 = EMPTY_DIGIT;
+		if (d1 == 0) {
+			d1 = EMPTY_DIGIT;
+		}
+	}
+
 	set_display_each_digit(d0, d1, d2, d3, 1);
 }
 
