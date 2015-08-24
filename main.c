@@ -32,11 +32,10 @@ void delay_us(uint16_t count) {
 #define B 2
 #define A 1
 
-
 char tab[11] = { (A + B + C + D + E + F), (B + C), (A + B + G + E + D), (A + B
 		+ G + C + D), (F + G + B + C), (A + F + G + C + D), (A + F + G + E + D
 		+ C), (F + A + B + C), (A + B + C + D + E + F + G), (A + B + C + D + F
-		+ G), (0)};
+		+ G), (0) };
 #define EMPTY_DIGIT 10
 
 volatile char display[4]; // dot handled below
@@ -91,17 +90,30 @@ void set_display_whole_number(int number) {
 int main() {
 
 	DDRB = 0xff;
+	DDRB &= ~(1 << PB3);
 
-	TIMSK0 |=1<<TOIE0;
+	TIMSK0 |= 1 << TOIE0;
 	TCCR0B |= (1 << CS00);
 	TCCR0B |= (1 << CS01);
 	TCCR0B &= ~(1 << CS02);
-
 	sei();
 
-	int i = 0;
+	ADMUX |= (1 << REFS0); // internal 1.1V
+
+	ADMUX |= (1 << MUX0); // PB3
+	ADMUX |= (1 << MUX1); // PB3
+	DIDR0 |= (1 << ADC3D); // PB3
+
+	ADCSRA |= (1 << ADPS1) | (1 << ADPS0) | (1 << ADPS2) | (1 << ADEN); // clk/8
+
 	while (1) {
-		set_display_whole_number(i++);
-		delay_ms(5);
+		ADCSRA |= (1 << ADSC);
+		while (ADCSRA & (1 << ADSC)) {
+		}
+
+		uint32_t adc_read = ADC;
+		uint32_t volts_4digit = (adc_read * 110) / 1024;
+		set_display_whole_number(volts_4digit);
+		delay_ms(500);
 	}
 }
