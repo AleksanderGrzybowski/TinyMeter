@@ -116,7 +116,7 @@ int main() {
 		// 0.92 hand-calibrated on 5V supply
 		// 1.05 hand-calibrated because of 4.5V supply
 		// 1024 max ADC reading
-		uint32_t volts_4digit = ((adc_read * (int) (110 * 13 * 0.92 * 1.05)) / 1024);
+		uint32_t volts_4digit = ((adc_read * (int) (110 * 13 * 0.92 * 1.1)) / 1024);
 		set_display_whole_number(volts_4digit);
 		delay_ms(500);
 	}
