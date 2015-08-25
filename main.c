@@ -118,6 +118,6 @@ int main() {
 		// 1024 max ADC reading
 		uint32_t volts_4digit = ((adc_read * (int) (110 * 13 * 0.92 * 1.1)) / 1024);
 		set_display_whole_number(volts_4digit);
-		delay_ms(500);
+		delay_ms(350);
 	}
 }
