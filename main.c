@@ -32,12 +32,12 @@ void delay_us(uint16_t count) {
 #define B 2
 #define A 1
 
-char tab[11] = { (A + B + C + D + E + F), (B + C), (A + B + G + E + D), (A + B
+char tab[12] = { (A + B + C + D + E + F), (B + C), (A + B + G + E + D), (A + B
 		+ G + C + D), (F + G + B + C), (A + F + G + C + D), (A + F + G + E + D
 		+ C), (F + A + B + C), (A + B + C + D + E + F + G), (A + B + C + D + F
-		+ G), (0) };
+		+ G), (0), (G) };
 #define EMPTY_DIGIT 10
-
+#define DASH 11
 volatile char display[4]; // dot handled below
 volatile int cur_digit = 0;
 volatile int dot_on = 0; // 1 = dot is on, 0 = dot is off
@@ -111,13 +111,18 @@ int main() {
 
 		uint32_t adc_read = ADC;
 
-		// 110 - voltage reference 1.1V
-		// 13 - voltage divider on the input 10k || 120k
-		// 0.92 hand-calibrated on 5V supply
-		// 1.05 hand-calibrated because of 4.5V supply
-		// 1024 max ADC reading
-		uint32_t volts_4digit = ((adc_read * (int) (110 * 13 * 0.92 * 1.1)) / 1024);
-		set_display_whole_number(volts_4digit);
+		if (adc_read >= 1020) {
+			set_display_each_digit(DASH, DASH, DASH, DASH, 0);
+		} else {
+			// 110 - voltage reference 1.1V
+			// 13 - voltage divider on the input 10k || 120k
+			// 0.92 hand-calibrated on 5V supply
+			// 1.05 hand-calibrated because of 4.5V supply
+			// 1024 max ADC reading
+			uint32_t volts_4digit = ((adc_read * (int) (110 * 13 * 0.92 * 1.1)) / 1024);
+			set_display_whole_number(volts_4digit);
+		}
+
 		delay_ms(350);
 	}
 }
